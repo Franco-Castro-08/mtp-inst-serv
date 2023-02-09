@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js"
-  },
+    "dev": "node src/index.js",
+    "cliente": "npm run start --prefix cliente"
+      },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^6.9.0"
+    "mongoose": "^6.9.0",
+    "tar": "^6.1.13"
   }
 }

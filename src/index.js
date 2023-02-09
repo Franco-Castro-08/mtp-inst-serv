@@ -35,10 +35,10 @@ app.use(instrumentosRouter);
 const crearPaciente = () =>{
     Pacientes.create(
       {
-        dni:'26455819',
-        nombre:'Sebastian',
-        apellido:'Puebla',
-        telefono:'2614389735'
+       // dni:'26455819',
+       // nombre:'Sebastian',
+       // apellido:'Puebla',
+       // telefono:'2614389735'
       }
     )
 }    
@@ -46,10 +46,10 @@ const crearPaciente = () =>{
 const crearMusicoterapeuta = () =>{
     Musicoterapeutas.create(
      {
-        matricula:'6756',
-        nombre:'Emanuel',
-        apellido:'Gattoni',
-        pacientes:mongoose.Types.ObjectId("63e26bdcd2ad3f86114d57ca")
+      //  matricula:'6756',
+      //  nombre:'Emanuel',
+      //  apellido:'Gattoni',
+      //  pacientes:mongoose.Types.ObjectId("63e26bdcd2ad3f86114d57ca")
      }
     )
    
@@ -58,19 +58,21 @@ const crearMusicoterapeuta = () =>{
 const crearTipoIns = () =>{
   Tipos.create(
     {
-      nombre:'Cuerda',
-      descripcion:'los de cuerda son....'
+    //  nombre:'Cuerda',
+    //  descripcion:'los de cuerda son....'
     }
   )
 }
 
-
 const crearInstrumento = () =>{
    Instrumentos.create(
    {
-      nombre:'Saxofon',
-      descripcion:'De viento, de metal con boquilla de madera y varias llaves',
-      tipo:mongoose.Types.ObjectId("63e2d16b9ef3922ef188926b")
+   // nombre:'Guitarra',
+   // descripcion:'6 cuerdas',
+   // tipos: 'Cuerda'
+    //  nombre:'Saxofon',
+    //  descripcion:'De viento, de metal con boquilla de madera y varias llaves',
+     // tipos: 'Viento'
    }
   )
  
@@ -78,32 +80,51 @@ const crearInstrumento = () =>{
 
 //agregado de tutorial
 
-//const listaMusicoterapeutasConPacientes = async () => {
-    //const resultado = await Pacientes.aggregate(
-    //[
-    // {
-    //    $lookup: {
-    //        from: "musicoterapeuta",
-    //        let:{ 
-    //            aliasNombrePaciente: "$nombre"
-    //        },
-    //        pipeline:[
-    //            {
-   //              $match:{
-   //                 $expr: {
-   //                     $in: ["$$aliasNombrePaciente","$pacientes"]
-   //                 } 
-   //              }
-   //             } 
-  //              ],
- //           as: 'listaDePacientesEncontrados'   
- //       }
- //    }
-//    ]
-//  )
+const listaMusicoterapeutasConPacientes = async () => {
+
+  const resultado = await Musicoterapeutas.aggregate(
+[
+  {
+    $lookup:
+    {
+       from: "pacientes",
+       localField: "pacientes",
+       foreignField:"_id",
+       as: "listapaciente"
+    }
+  },
+  {$unwind:"$listapaciente"}
+]
+  )
+    console.log('******* RESULTADOS *******', resultado);//JSON.stringify(resultado)
+}
+
+const listaInstrumentoConTipos = async () => {
+    const resultado = await Tipos.aggregate(
+     [
+     {
+        $lookup: {
+            from: "instrumentos",
+            let:{ 
+                aliasNombreTipo: "$nombre"
+            },
+            pipeline:[
+                {
+                 $match:{
+                    $expr: {
+                        $in: ["$$aliasNombreTipo","$tipos"]
+                    } 
+                 }
+                } 
+                ],
+            as: 'listaDeTiposEncontrados'   
+        }
+    }
+    ]
+  )
   
-//  console.log('******* RESULTADOS *******', JSON.stringify(resultado));
-//}
+  console.log('******* RESULTADOS *******', JSON.stringify(resultado));//
+}
 
 
 //llamar funcion
@@ -113,7 +134,8 @@ const crearInstrumento = () =>{
 //crearInstrumento();
 
 //tutorial agregado
-//listaMusicoterapeutasConPacientes();
+listaMusicoterapeutasConPacientes();
+//listaInstrumentoConTipos();
 
 //iniciar app
 app.listen(PORT, () => console.log(`Iniciando  app en puerto ${PORT}`));
