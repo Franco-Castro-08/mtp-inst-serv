@@ -10,9 +10,9 @@ const InstrumentosSchema = new mongoose.Schema(
             type: String,
             require: true
         },
-        tipos: {                         // agregado de tutorial                          //----
-            type: Array,
-            default: []
+        tipos: {   type: mongoose.Types.ObjectId
+            //type: Array,
+            //default: []
         }
     });
 

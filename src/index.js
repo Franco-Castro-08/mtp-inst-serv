@@ -15,7 +15,7 @@ const tiposRouter = require('./routes/tiposRoutes')
 const instrumentosRouter = require('./routes/instrumentosRoutes')
 
 const PORT = 4000;
-const MONGO_URI = 'mongodb://localhost:27017/mtp23'; 
+const MONGO_URI = 'mongodb://0.0.0.0:27017/mtp23'; 
 mongoose.set('strictQuery', true);
 mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
@@ -67,12 +67,12 @@ const crearTipoIns = () =>{
 const crearInstrumento = () =>{
    Instrumentos.create(
    {
-   // nombre:'Guitarra',
-   // descripcion:'6 cuerdas',
-   // tipos: 'Cuerda'
-    //  nombre:'Saxofon',
-    //  descripcion:'De viento, de metal con boquilla de madera y varias llaves',
-     // tipos: 'Viento'
+    //nombre:'Guitarra',
+    //descripcion:'6 cuerdas',
+    //tipos: mongoose.Types.ObjectId("63e2d23ceb8c7e8885349ca7")
+      nombre:'Saxofon',
+      descripcion:'De viento, de metal con boquilla de madera y varias llaves',
+    tipos: mongoose.Types.ObjectId("63e2d16b9ef3922ef188926b")
    }
   )
  
@@ -100,30 +100,21 @@ const listaMusicoterapeutasConPacientes = async () => {
 }
 
 const listaInstrumentoConTipos = async () => {
-    const resultado = await Tipos.aggregate(
+    const resultado = await Instrumentos.aggregate(
      [
      {
         $lookup: {
-            from: "instrumentos",
-            let:{ 
-                aliasNombreTipo: "$nombre"
-            },
-            pipeline:[
-                {
-                 $match:{
-                    $expr: {
-                        $in: ["$$aliasNombreTipo","$tipos"]
-                    } 
-                 }
-                } 
-                ],
-            as: 'listaDeTiposEncontrados'   
+            from: "tipos",
+            localField: "tipos",
+            foreignField: "_id",
+            as: "listatipos"  
         }
-    }
+    },
+    {$unwind:"$listatipos"}
     ]
   )
   
-  console.log('******* RESULTADOS *******', JSON.stringify(resultado));//
+  console.log('******* RESULTADOS *******', resultado);//JSON.stringify()
 }
 
 
@@ -134,8 +125,8 @@ const listaInstrumentoConTipos = async () => {
 //crearInstrumento();
 
 //tutorial agregado
-listaMusicoterapeutasConPacientes();
-//listaInstrumentoConTipos();
+//listaMusicoterapeutasConPacientes();
+listaInstrumentoConTipos();
 
 //iniciar app
 app.listen(PORT, () => console.log(`Iniciando  app en puerto ${PORT}`));

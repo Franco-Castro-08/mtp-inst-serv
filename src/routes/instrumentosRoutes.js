@@ -9,6 +9,24 @@ const instrumentos = await Instrumentos.find();
 res.send(instrumentos);                             
 });
 
+
+//agregar paciente    ---Deberias traer de tipos algo asi /tiposins
+router.post('/api/instrumento/agregarins', (req,res) =>{
+  const nuevoinstrumento = new Instrumentos({
+      nombre: req.body.nombre,
+      descripcion: req.body.descripcion,
+      tipos: req.body.tipos,
+      idinstrumento: req.body.idinstrumento
+  })
+  nuevoinstrumento.save(function(err){
+      if (!err) {
+          res.send('Instrumento agregado correctamente')
+      }else{
+          res.send(err)
+      }
+  })
+})
+
 // GET: una tarea determinada - http://localhost:4000/api/tareas/:id
   
 router.get('/api/instrumentos/:id', (req, res) => {res.send({nombre: "Guitarra"});
